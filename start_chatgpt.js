@@ -60,25 +60,18 @@ if (key) {
       }
     },
     {
+      method: "local.set",
+      params: {
+        key: "{{input.key}}"
+      }
+    }
+    {
       method: "fs.write",
       params: {
         path: "key.txt",
-        text: "{{input.key}}"
+        text: "{{local.key}}"
       }
     },
-    {
-      method: "fs.read",
-      params: {
-        path: "key.txt",
-        encoding: "utf8"
-      }
-    },
-    {
-      method: "local.set",
-      params: {
-        key: "{{input}}"
-      }
-    }
   ].concat(run)
 }
 
