@@ -2,12 +2,14 @@ const path = require('path')
 module.exports = {
   version: "1.5",
   title: "openui",
-  description: "",
+  description: "Describe UI and see it rendered live. Ask for changes and convert HTML to React, Svelte, Web Components, etc. Like vercel v0, but open source https://github.com/wandb/openui",
   icon: "icon.png",
   menu: async (kernel) => {
     let installing = await kernel.running(__dirname, "install.js")
-    let installed = await kernel.exists(__dirname, "app", "env")
-    let running = await kernel.running(__dirname, "start.js")
+    let installed = await kernel.exists(__dirname, "app", "backend", "env")
+    let chatgpt_running = await kernel.running(__dirname, "start_chatgpt.js")
+    let ollama_running = await kernel.running(__dirname, "start_ollama.js")
+    let running = chatgpt_running || ollama_running
     if (installing) {
       return [{
         icon: "fa-solid fa-plug",
@@ -16,29 +18,59 @@ module.exports = {
       }]
     } else if (installed) {
       if (running) {
-        let local = kernel.memory.local[path.resolve(__dirname, "start.js")]
-        if (local && local.url) {
-          return [{
-            icon: "fa-solid fa-rocket",
-            text: "Open Web UI",
-            href: local.url,
-          }, {
-            icon: 'fa-solid fa-terminal',
-            text: "Terminal",
-            href: "start.js",
-          }]
-        } else {
-          return [{
-            icon: 'fa-solid fa-terminal',
-            text: "Terminal",
-            href: "start.js",
-          }]
+        if (chatgpt_running) {
+          let local = kernel.memory.local[path.resolve(__dirname, "start_chatgpt.js")]
+          if (local && local.url) {
+            return [{
+              icon: "fa-solid fa-rocket",
+              text: "Open Web UI",
+              href: local.url,
+              popout: true,
+            }, {
+              icon: 'fa-solid fa-terminal',
+              text: "Terminal",
+              href: "start_chatgpt.js",
+            }]
+          } else {
+            return [{
+              icon: 'fa-solid fa-terminal',
+              text: "Terminal",
+              href: "start_chatgpt.js",
+            }]
+          }
+        } else if (ollama_running) {
+          let local = kernel.memory.local[path.resolve(__dirname, "start_ollama.js")]
+          if (local && local.url) {
+            return [{
+              icon: "fa-solid fa-rocket",
+              text: "Open Web UI",
+              href: local.url,
+              popout: true,
+            }, {
+              icon: 'fa-solid fa-terminal',
+              text: "Terminal",
+              href: "start_ollama.js",
+            }]
+          } else {
+            return [{
+              icon: 'fa-solid fa-terminal',
+              text: "Terminal",
+              href: "start_ollama.js",
+            }]
+          }
         }
       } else {
         return [{
           icon: "fa-solid fa-power-off",
           text: "Start",
-          href: "start.js",
+          menu: [{
+            text: "Ollama",
+            href: "start_ollama.js"
+          }, {
+            text: "ChatGPT",
+            href: "start_chatgpt.js"
+          }]
+          
         }, {
           icon: "fa-solid fa-plug",
           text: "Update",
