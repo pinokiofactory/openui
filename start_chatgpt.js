@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 let run = [
   {
     method: "shell.run",
@@ -32,10 +33,19 @@ let run = [
 
 let key = ""
 try {
-  key = fs.readFileSync("key.txt")
+  key = fs.readFileSync(path.resolve(__dirname, "key.txt"))
 } catch (e) {
 }
-if (!key) {
+if (key) {
+  run = [
+    {
+      method: "local.set",
+      params: {
+        key
+      }
+    }
+  ].concat(run)
+} else {
   run = [
     {
       method: "input",
@@ -44,32 +54,24 @@ if (!key) {
         description: "Get the API key at https://platform.openai.com/login?launch",
         form: [{
           key: "key",
-          title: "API Key",
           placeholder: "Set the API Key",
           value: key
         }]
       }
     },
     {
+      method: "local.set",
+      params: {
+        key: "{{input.key}}"
+      }
+    },
+    {
       method: "fs.write",
       params: {
         path: "key.txt",
-        text: "{{input.key}}"
+        text: "{{local.key}}"
       }
     },
-    {
-      method: "fs.read",
-      params: {
-        path: "key.txt",
-        encoding: "utf8"
-      }
-    },
-    {
-      method: "local.set",
-      params: {
-        key: "{{input}}"
-      }
-    }
   ].concat(run)
 }
 
