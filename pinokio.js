@@ -1,4 +1,5 @@
 const path = require('path')
+const fs = require('fs')
 module.exports = {
   version: "1.5",
   title: "openui",
@@ -10,6 +11,12 @@ module.exports = {
     let chatgpt_running = await kernel.running(__dirname, "start_chatgpt.js")
     let ollama_running = await kernel.running(__dirname, "start_ollama.js")
     let running = chatgpt_running || ollama_running
+    let key
+    try {
+      key = await fs.promises.readFile(path.resolve(__dirname, "key.txt"), "utf8")
+    } catch (e) {
+      key = ""
+    }
     const models = ["llava:7b", "llava:13b", "llava:34b", "bakllava"]
     if (installing) {
       return [{
@@ -69,9 +76,11 @@ module.exports = {
             href: "start_ollama.js"
           }, {
             text: "Use ChatGPT",
-            href: "start_chatgpt.js"
+            href: "start_chatgpt.js",
+            params: {
+              key
+            }
           }]
-          
         }, {
           icon: "fa-solid fa-plug",
           text: "Update",
