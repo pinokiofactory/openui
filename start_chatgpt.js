@@ -64,7 +64,7 @@ if (key) {
       params: {
         key: "{{input.key}}"
       }
-    }
+    },
     {
       method: "fs.write",
       params: {
