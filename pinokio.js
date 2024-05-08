@@ -65,10 +65,10 @@ module.exports = {
           icon: "fa-solid fa-power-off",
           text: "Start",
           menu: [{
-            text: "Ollama",
+            text: "Use Ollama",
             href: "start_ollama.js"
           }, {
-            text: "ChatGPT",
+            text: "Use ChatGPT",
             href: "start_chatgpt.js"
           }]
           
