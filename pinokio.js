@@ -20,6 +20,7 @@ module.exports = {
     const models = ["llava:7b", "llava:13b", "llava:34b", "bakllava"]
     if (installing) {
       return [{
+        default: true,
         icon: "fa-solid fa-plug",
         text: "Installing",
         href: "install.js",
@@ -109,6 +110,7 @@ module.exports = {
       }
     } else {
       return [{
+        default: true,
         icon: "fa-solid fa-plug",
         text: "Install",
         href: "install.js",
